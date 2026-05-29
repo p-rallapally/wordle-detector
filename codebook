@@ -1,0 +1,91 @@
+OVERVIEW
+This dataset contains processed Wordle gameplay data derived from emoji-based summaries of player attempts. 
+
+Formal citation: Scarcalvetsis. (2022). Wordle games [Data set]. Kaggle https://www.kaggle.com/datasets/scarcalvetsis/wordle-games
+
+ORIGINAL KAGGLE VARIABLES
+
+1. Game
+Type: Integer / ID
+Unique identifier assigned by Wordle to each daily puzzle. Each value corresponds to a specific target word.
+
+2. Trial
+Type: Integer
+Number of attempts made by the player before either solving the puzzle or reaching the maximum allowed number of guesses.
+Range: 1–6
+
+3. Username
+Type: Integer / ID
+An anonymized unique identifier for each player in the dataset. No personal identifying information is included.
+
+4. processed_text
+Type: String
+Emoji-based representation of each Wordle game. Each row contains a sequence of colored square emojis representing individual guesses:
+    🟩 = Correct letter in correct position (green)
+    🟨 = Correct letter in incorrect position (yellow)
+    ⬛ / ⬜ = Incorrect letter (gray/black)
+
+Ex: 
+
+'⬛⬛🟨⬛⬛',
+'⬛⬛🟩🟨⬛',
+'🟩⬛🟩⬛⬛',
+'🟩🟩🟩🟩🟩'
+
+
+
+5. target
+Type: String
+The correct word that the player is attempting to guess for a given game.
+
+
+DERIVED VARIABLES (shared with the synthetic dataset)
+
+6. n_guesses
+Type: Integer
+Description: Total number of guesses made by the player in a game.
+Range: 1–6
+
+7. entropy_start
+Type: Float
+Shannon entropy of the candidate solution set at the beginning of the game. Represents the initial uncertainty about the target word.
+
+8. entropy_end
+Type: Float
+Shannon entropy of the remaining candidate solution set after the final guess. Reflects the uncertainty remaining at the end of the game.
+
+9. mean_entropy_drop
+Type: Float
+Average reduction in entropy between consecutive guesses. Measures the typical amount of information gained per guess.
+
+10. max_entropy_drop
+Type: Float
+Largest single reduction in entropy observed during the game. Represents the most informative guess made.
+
+11. early_entropy_drop
+Type: Float
+Average entropy reduction across the first two guesses. Captures how quickly the player reduces uncertainty early in the game.
+
+12. monotone_entropy_drop
+Type: Boolean (True/False)
+Indicates whether entropy decreased consistently over the course of the game.
+Values:
+    True  = Entropy consistently decreases or remains non-increasing across guesses
+    False = At least one step shows no decrease or an increase in entropy
+
+13. green_fraction
+Type: Float (0–1)
+Average proportion of green tiles (correct letter and correct position) across all guesses in a game.
+
+14. yellow_fraction
+Type: Float (0–1)
+Average proportion of yellow tiles (correct letter but incorrect position) across all guesses in a game.
+
+15. valid
+Type: Integer 
+Variable created when joining the synthetic dataset; 1 = valid, 0 = invalid (NA for the real dataset)
+
+16. source
+Type: String 
+Additional differentiator between 'synthetic_valid', 'synthetic_invalid', and 'real'.
+

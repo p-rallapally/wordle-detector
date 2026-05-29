@@ -1,0 +1,6 @@
+wordle_games.csv
+*.rds
+*.Rproj
+.Rhistory
+*.RData
+.Rproj.user/
