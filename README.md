@@ -1,179 +1,94 @@
-Bot or Not? 🤖
-Using Machine Learning to Distinguish Assisted and Unassisted Wordle Play
-Overview
+# Bot or Not? 🤖
 
-Every day, millions of people share their Wordle results using the game's emoji-based summary format. While these summaries do not reveal the actual guesses made, they still contain information about a player's decision-making process.
+Using machine learning to distinguish assisted and unassisted Wordle play.
 
-This project investigates a simple question:
+## Overview
 
-Can Wordle result summaries be used to distinguish statistically plausible human play from play assisted by external tools such as Wordle solvers?
+Wordle result summaries contain surprisingly rich information about a player's decision-making process. Although these summaries do not reveal the actual guesses used, they preserve patterns of information acquisition that may differ between human players and those using external solver tools.
 
-Because real-world Wordle data does not contain labels indicating whether a game was assisted, this project develops a synthetic data generation framework that simulates both valid (human-like) and invalid (solver-assisted) gameplay. Machine learning models are then trained on these simulated games and applied to real Wordle data.
+This project investigates whether machine learning models can distinguish between:
 
-Research Question
+- **Valid play** (unassisted, human-like gameplay)
+- **Invalid play** (solver-assisted gameplay)
 
-Can gameplay features extracted solely from Wordle emoji summaries be used to classify games as:
+Because no labeled dataset of assisted Wordle games exists, this project develops a simulation framework to generate synthetic examples of both gameplay styles and uses them to train classification models.
 
-Valid (unassisted, human-like play)
-Invalid (solver-assisted play)
-Methodology
-1. Wordle Simulation Engine
+---
 
-A custom Wordle simulator was developed to reproduce the mechanics of the original game.
+## Research Question
 
-The simulator:
+Can features extracted solely from Wordle result summaries be used to classify whether a game was played with or without external assistance?
 
-Selects target words from the official Wordle solution list
-Generates guesses sequentially
-Computes Wordle feedback (green, yellow, gray tiles)
-Tracks remaining candidate words after each guess
+---
 
-Two gameplay strategies were simulated:
+## Methodology
 
-Valid Play
+### 1. Wordle Simulation Engine
 
-Human-like heuristic strategy:
+A custom Wordle simulator was developed to reproduce the game's mechanics and generate synthetic gameplay data.
 
-Prioritizes information gathering
-Makes imperfect decisions
-Does not always choose the optimal guess
-Invalid Play
+Two strategies were simulated:
 
-Solver-assisted strategy:
+#### Valid Play
 
-Has access to candidate word information
-Selects guesses that maximize expected information gain
-Reduces uncertainty much more efficiently
-2. Synthetic Dataset Generation
+- Human-like guessing behavior
+- Imperfect information use
+- Exploration-oriented decisions
+- Realistic variability in performance
 
-Thousands of simulated games were generated under both conditions.
+#### Invalid Play
 
-For each game, summary-level features were extracted, including:
+- Solver-assisted guessing
+- Maximization of expected information gain
+- Rapid reduction of uncertainty
+- Near-optimal decision making
 
-Mean entropy reduction per guess
-Maximum entropy reduction
-Early-game entropy reduction
-Fraction of green tiles
-Fraction of yellow tiles
-Guess efficiency metrics
-Feedback progression metrics
+---
 
-These features formed the training dataset for the machine learning models.
+### 2. Feature Engineering
 
-3. Real Wordle Dataset
+For each simulated game, summary-level features were extracted, including:
 
-To evaluate whether the learned patterns generalize beyond simulation, the models were applied to a large public Wordle dataset:
+- Mean entropy reduction per guess
+- Maximum entropy reduction
+- Early-game information gain
+- Fraction of green tiles
+- Fraction of yellow tiles
+- Guess efficiency metrics
+- Feedback progression statistics
 
-Source: Scarcalvetsis (2022), Kaggle Wordle Games Dataset
+These features were designed to capture differences in how information is acquired throughout the game.
 
-Dataset characteristics:
+---
 
-~6.9 million Wordle results
-Collected from publicly shared Twitter posts
-Contains Wordle summaries and metadata
-No labels indicating whether games were assisted
+### 3. Model Training
 
-A random subset of the dataset was used for analysis.
+Synthetic games were split into training and testing sets.
 
-4. Machine Learning Pipeline
+Several machine learning models were evaluated:
 
-The synthetic dataset was split into:
+- Logistic Regression
+- Elastic Net
+- Random Forest
+- XGBoost
 
-70% Training
-30% Testing
+Model tuning was performed using cross-validation within the `tidymodels` framework.
 
-Using k-fold cross-validation, the following models were trained and compared:
+---
 
-Logistic Regression
-Elastic Net
-Random Forest
-XGBoost (Gradient Boosted Trees)
+### 4. Real-World Evaluation
 
-Preprocessing included:
+The trained models were applied to a large public dataset of Wordle results collected from Twitter.
 
-Feature scaling
-Dummy encoding
-Missing-value handling
-Removal of uninformative variables
-Results
-Synthetic Test Data
+Dataset:
 
-Among all candidate models, XGBoost achieved the strongest performance on held-out synthetic data.
+- Approximately 6.9 million Wordle games
+- Publicly shared Wordle summaries
+- No labels indicating assisted or unassisted play
 
-Feature importance analysis showed that the most informative predictors were primarily:
+The goal was not to identify individual cheaters, but rather to examine whether real-world gameplay patterns resemble the simulated strategies.
 
-Entropy-based metrics
-Green-tile accumulation rates
-Information-gain measures
+---
 
-These findings support the hypothesis that solver-assisted play produces distinct information acquisition patterns.
 
-Real-World Application
 
-The best-performing model was applied to real Wordle games.
-
-Key observations:
-
-Predicted probabilities showed a bimodal distribution.
-Most games strongly resembled the simulated valid strategy.
-A smaller subset resembled the simulated solver-assisted strategy.
-
-Importantly:
-
-The model does not identify individual players as cheaters.
-
-Instead, it detects gameplay patterns that statistically resemble the assisted strategy used during simulation.
-
-Repository Structure
-.
-├── data/
-│   ├── synthetic_data.csv
-│   ├── real_wordle_data.csv
-│
-├── scripts/
-│   ├── simulation_engine.R
-│   ├── feature_extraction.R
-│   ├── model_training.R
-│   └── evaluation.R
-│
-├── figures/
-│   ├── eda/
-│   ├── model_performance/
-│   └── feature_importance/
-│
-├── Final-Project.html
-├── Final-Project.Rmd
-└── README.md
-Technologies Used
-R
-tidymodels
-tidyverse
-xgboost
-ranger
-ggplot2
-patchwork
-yardstick
-Key Takeaways
-Wordle summaries contain meaningful information about decision-making processes.
-Entropy-based features are highly informative for distinguishing gameplay styles.
-Machine learning models can successfully separate simulated assisted and unassisted play.
-Synthetic data provides a practical solution when labeled real-world data is unavailable.
-Future Work
-
-Potential extensions include:
-
-More realistic models of human gameplay
-Additional cheating/assistance strategies
-Sequence-based models (RNNs, Transformers)
-User-level longitudinal analysis
-Calibration against experimentally collected labeled gameplay data
-Author
-
-Pratyush Rallapally
-
-Statistics & Data Science + Biology
-University of California, Santa Barbara
-
-Disclaimer
-
-This project is intended as an exploration of gameplay behavior and machine learning classification. Model predictions should not be interpreted as evidence that any individual player cheated.
