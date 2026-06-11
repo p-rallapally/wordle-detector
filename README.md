@@ -85,9 +85,6 @@ Dataset:
 - Approximately 6.9 million Wordle games
 - Publicly shared Wordle summaries
 - No labels indicating assisted or unassisted play
-
-The goal was not to identify individual cheaters, but rather to examine whether real-world gameplay patterns resemble the simulated strategies.
-
 ---
 
 
